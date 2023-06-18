@@ -72,3 +72,25 @@ class BakerySnippetViewSetGroup(SnippetViewSetGroup):
 # When using a SnippetViewSetGroup class to group several SnippetViewSet classes together,
 # you only need to register the SnippetViewSetGroup class with Wagtail:
 register_snippet(BakerySnippetViewSetGroup)
+
+from wagtail import hooks
+from wagtail_ab_testing.events import BaseEvent
+
+
+class CustomEvent(BaseEvent):
+    name = "Custom event"
+    requires_page = False  # Set to False to create a "Global" event type that could be reached on any page
+
+    # def get_page_types(self):
+    #     return [
+    #         # Return a list of page models that can be used as destination pages for this event type
+    #         # For example, if this 'event type' is for a 'call to action' button that only appears on
+    #         # the homepage, put your `HomePage` model here.
+    #     ]
+
+
+@hooks.register('register_ab_testing_event_types')
+def register_ab_test_event_types():
+    return {
+        'custom-event-type': CustomEvent,
+    }
